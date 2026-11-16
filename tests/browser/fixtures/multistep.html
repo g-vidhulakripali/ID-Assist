@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Booking (3 steps)</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Book an appointment</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <p id="progress" aria-live="polite">Step 1 of 3</p>
+    <form id="booking" onsubmit="event.preventDefault(); alert('Submitted (test page)')">
+      <section class="step" data-step="1">
+        <h2>Your details</h2>
+        <div class="field"><label for="name">Name</label><input id="name" name="name" required /></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
+      </section>
+      <section class="step" data-step="2" hidden>
+        <h2>Appointment</h2>
+        <div class="field"><label for="date">Preferred date</label><input id="date" name="date" type="date" /></div>
+        <div class="field"><label for="time">Preferred time</label><input id="time" name="time" type="time" /></div>
+        <div class="field"><label for="reason">Reason for visit</label><textarea id="reason" name="reason"></textarea></div>
+      </section>
+      <section class="step" data-step="3" hidden>
+        <h2>Confirm</h2>
+        <div class="field"><label><input type="checkbox" name="reminder" /> Send me a reminder</label></div>
+        <div class="field"><label for="notes">Anything else?</label><textarea id="notes" name="notes"></textarea></div>
+      </section>
+      <div class="row">
+        <button type="button" id="back" hidden>Back</button>
+        <button type="button" id="next">Next</button>
+        <button type="submit" id="submit" hidden>Book</button>
+      </div>
+    </form>
+    <script>
+      let step = 1;
+      const show = () => {
+        document.querySelectorAll('.step').forEach((s) => (s.hidden = Number(s.dataset.step) !== step));
+        document.getElementById('progress').textContent = `Step ${step} of 3`;
+        document.getElementById('back').hidden = step === 1;
+        document.getElementById('next').hidden = step === 3;
+        document.getElementById('submit').hidden = step !== 3;
+        history.replaceState(null, '', `#step-${step}`);
+      };
+      document.getElementById('next').onclick = () => { step = Math.min(3, step + 1); show(); };
+      document.getElementById('back').onclick = () => { step = Math.max(1, step - 1); show(); };
+    </script>
+    <footer>ID Assist fixture: a single form revealed in three steps on one page.</footer>
+  </body>
+</html>

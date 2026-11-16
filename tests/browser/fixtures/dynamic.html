@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Feedback (loads late)</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Tell us what you think</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <p id="status">Loading the feedback form&hellip;</p>
+    <div id="slot"></div>
+    <p><button type="button" id="remove">Remove the form</button> <button type="button" id="add">Add the form again</button></p>
+    <script>
+      function addForm() {
+        if (document.getElementById('feedback')) return;
+        const form = document.createElement('form');
+        form.id = 'feedback';
+        form.innerHTML = `
+          <div class="field"><label for="name">Name</label><input id="name" name="name" /></div>
+          <div class="field"><label for="rating">Rating</label>
+            <select id="rating" name="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
+          <div class="field"><label for="comments">Comments</label><textarea id="comments" name="comments"></textarea></div>
+          <button type="submit">Send</button>`;
+        form.onsubmit = (e) => { e.preventDefault(); alert('Submitted (test page)'); };
+        document.getElementById('slot').appendChild(form);
+        document.getElementById('status').textContent = 'Form loaded.';
+      }
+      setTimeout(addForm, 2000);
+      document.getElementById('remove').onclick = () => { document.getElementById('feedback')?.remove(); document.getElementById('status').textContent = 'Form removed.'; };
+      document.getElementById('add').onclick = addForm;
+    </script>
+    <footer>ID Assist fixture: the form is injected two seconds after load and can be removed and re-added.</footer>
+  </body>
+</html>

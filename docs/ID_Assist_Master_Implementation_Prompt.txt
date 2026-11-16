@@ -1,0 +1,937 @@
+# ID Assist — Master Implementation Prompt
+## Intelligent Dictation Assistance | Microsoft Edge Extension
+
+You are a senior software architect and browser-extension engineer. Your task is to design and build **ID Assist (Intelligent Dictation Assistance)**, a voice-first, intelligent form-filling assistant for Microsoft Edge.
+
+This is a new project starting from an empty repository. You are responsible for establishing the architecture, project structure, implementation strategy, testing infrastructure and documentation.
+
+Do not rush into implementation. First understand the requirements, establish a sound architecture and then implement the project incrementally.
+
+---
+
+# 1. Product Vision
+
+ID Assist is a specialised browser assistant that helps users complete online forms through natural conversation.
+
+The user should be able to visit almost any website containing a form, receive an offer of assistance, and complete the form by answering questions verbally.
+
+The assistant should behave like a helpful human guiding someone through a form.
+
+The user should not need to:
+- Open a separate application.
+- Navigate to a chatbot.
+- Copy and paste answers.
+- Manually explain the form structure.
+- Answer the same question repeatedly.
+- Confirm every ordinary action unnecessarily.
+
+ID Assist should work directly with the website's existing form fields.
+
+**Core principle: Make form completion easier, not more complicated.**
+
+## Primary objectives
+
+1. Broad compatibility with real-world websites.
+2. Natural voice-based interaction.
+3. Intelligent form understanding.
+4. Accurate information extraction and field mapping.
+5. Local-first and offline-capable operation wherever possible.
+6. Accessibility for users with different needs.
+7. Strong privacy and user control.
+8. Zero-LLM operation by default, with optional minimal LLM fallback if justified.
+
+Do not promise universal website compatibility. Browser security restrictions and inaccessible custom controls must be handled honestly.
+
+---
+
+# 2. Target Platform and Technology Direction
+
+The initial target is **Microsoft Edge**.
+
+Use the Chromium-based browser extension architecture.
+
+### Extension requirements
+
+- Manifest V3.
+- Compatible with current Microsoft Edge extension APIs.
+- Designed so Chrome compatibility can be introduced later.
+- Avoid unnecessary browser-specific dependencies.
+- Keep browser integration isolated from the core business logic.
+
+### Suggested technology direction
+
+Evaluate and use the following unless a technical reason justifies an alternative:
+
+- TypeScript for application logic.
+- HTML and CSS for the extension interface.
+- A lightweight build system such as Vite.
+- Browser extension APIs for page inspection and interaction.
+- Modular architecture with clear separation of responsibilities.
+- A suitable testing framework for unit and integration tests.
+
+Do not introduce a large frontend framework unless it provides a clear architectural benefit.
+
+Before selecting dependencies, explain why they are needed.
+
+---
+
+# 3. User Experience and Interaction Model
+
+## 3.1 Automatic form detection
+
+ID Assist should detect when a user encounters a form.
+
+Detection should:
+- Identify meaningful form elements.
+- Distinguish forms from ordinary page content.
+- Detect multiple forms on the same page.
+- Identify changes to forms dynamically.
+- Avoid repeated detection notifications when the same form is already being handled.
+
+Detection must not automatically activate the microphone or begin filling fields.
+
+## 3.2 Consent-first activation
+
+When ID Assist first encounters a form, it should politely ask:
+
+"Hi, I'm ID Assist. Would you like me to help you complete this form?"
+
+If the user agrees:
+- Activate the assistance session.
+- Begin inspecting the relevant form.
+- Start the conversational workflow.
+
+If the user declines:
+- Do not interact with the form.
+- Do not activate microphone listening.
+- Do not repeatedly prompt the user.
+
+Permission should be requested only once per assistance session.
+
+### Multiple pages and tabs
+
+A form may contain multiple sections, tabs or pages.
+
+ID Assist must understand the difference between:
+- Moving to another section of the same form.
+- Navigating to a genuinely different form.
+- Navigating to an entirely different website.
+
+Do not ask for consent again simply because the user moves between pages or sections of the same form.
+
+If a genuinely different form is encountered, ask whether the user wants to switch.
+
+If the user explicitly stops assistance, the session ends. A new session requires fresh consent.
+
+Provide settings to enable or disable automatic form detection.
+
+Provide an accessible manual activation method and a configurable keyboard shortcut. Check for browser shortcut conflicts before selecting a default.
+
+---
+
+# 4. Floating Assistant Interface
+
+The user should primarily see the original website.
+
+Do not create a separate dashboard, large chat window or permanent conversation panel.
+
+Instead, implement a small floating indicator.
+
+### Initial position
+
+Bottom-right corner.
+
+Make its position configurable so it can be adjusted later.
+
+### Indicator states
+
+The indicator should communicate:
+
+- Form detected.
+- Waiting for consent.
+- Active.
+- Listening.
+- Processing.
+- Speaking.
+- Paused.
+- Stopped.
+
+### Interaction
+
+Provide accessible controls to:
+- Pause assistance.
+- Resume assistance.
+- Stop assistance.
+- Close or dismiss the indicator where appropriate.
+
+The indicator must:
+- Avoid blocking important website content.
+- Remain visible above normal website content.
+- Avoid interfering with form controls.
+- Use a minimal and professional visual design.
+- Be tested against different screen sizes and website layouts.
+
+An optional transcript or waveform may be provided later, particularly for accessibility, but it must not be part of the default interface.
+
+---
+
+# 5. Form Understanding Engine
+
+This is one of the most important components.
+
+ID Assist must understand the purpose of a field rather than simply reading its label.
+
+For every field, consider:
+
+- Label.
+- Accessible name.
+- Surrounding instructions.
+- Input type.
+- Placeholder.
+- Required or optional status.
+- Validation constraints.
+- Available options.
+- Associated headings.
+- Relationship with neighbouring fields.
+- Overall form purpose.
+
+For example, do not ask:
+
+"What date should I enter?"
+
+Instead, understand the field and ask:
+
+"What is your date of birth?"
+
+The assistant should understand what information is expected before asking the user.
+
+### Supported controls
+
+Implement support incrementally for:
+
+- Text fields.
+- Email fields.
+- Number fields.
+- Telephone fields.
+- URL fields.
+- Textareas.
+- Radio buttons.
+- Checkboxes.
+- Dropdowns.
+- Multi-select controls.
+- Searchable dropdowns.
+- Date fields.
+- Time fields.
+- Month and week fields.
+- Range and rating controls.
+- Toggle controls.
+- File upload fields.
+- Repeating sections.
+- Conditional fields.
+- Multi-step forms.
+- Common custom controls.
+
+Support common JavaScript frameworks such as React, Angular and Vue through browser-level interaction rather than framework-specific assumptions.
+
+### Common internal field representation
+
+Create a standard internal representation for form fields.
+
+This should allow the conversation engine to work independently of the website's implementation.
+
+The representation should capture:
+- Field identity.
+- Field type.
+- Accessible label.
+- Context and instructions.
+- Required status.
+- Constraints.
+- Available options.
+- Current value, where safely accessible.
+- Validation status.
+- Sensitivity classification.
+- Mapping confidence.
+
+Keep the website-specific DOM interaction layer separate from the common field representation.
+
+---
+
+# 6. Fundamental Rule — Never Assume
+
+This requirement takes priority over convenience.
+
+ID Assist must never silently guess personal information or make unsupported assumptions.
+
+The user is the final authority on what information should be entered.
+
+If information is ambiguous, ask a focused clarification.
+
+Do not assume:
+- A name contains only one word.
+- A first-name field can contain only one name.
+- A telephone number has a particular length.
+- The user's country based on their current location.
+- A date format based only on regional conventions.
+- An unfamiliar name's spelling.
+- That two similar fields mean the same thing.
+- That a field should be left blank simply because its purpose is unclear.
+
+The assistant should ask only when necessary, but it must not guess to avoid asking.
+
+### Multiple names
+
+If the user provides two or more names, do not automatically split them.
+
+Ask whether they belong in the same field or different fields.
+
+Respect explicit instructions about spaces, punctuation and spelling.
+
+### General rule
+
+If the user explicitly provides an answer, follow that answer unless it conflicts with a technical constraint or safety requirement.
+
+If a conflict exists, explain it and ask.
+
+---
+
+# 7. Conversational Information Collection
+
+ID Assist should ask one clear question at a time.
+
+Before asking a question:
+1. Understand the field.
+2. Check information already provided.
+3. Check whether the answer can be derived from an earlier explicit response.
+4. Identify missing information.
+5. Ask only for what is necessary.
+
+Avoid asking duplicate questions.
+
+### Multi-field information
+
+One answer may contain information for multiple fields.
+
+For example:
+
+"I live at 12 Main Street, Berlin, 10115, Germany."
+
+The extraction engine should identify the individual components and map them to corresponding fields.
+
+However, if the mapping is uncertain, ask rather than assume.
+
+Maintain session-level information so users do not need to repeat themselves.
+
+Track:
+- Extracted values.
+- Confirmed values.
+- Uncertain values.
+- Missing values.
+- User corrections.
+- Field mappings.
+- Validation results.
+
+---
+
+# 8. Speech Recognition and Conversation Management
+
+Prioritise local speech recognition.
+
+Investigate suitable solutions that can run locally or offline where supported.
+
+Do not assume that the browser's built-in speech recognition is offline or private. Evaluate its actual implementation, browser compatibility, language support and network requirements.
+
+The conversation engine must support:
+
+- Natural speech.
+- One-question-at-a-time interaction.
+- Interruptions.
+- Self-correction.
+- Repetition.
+- Going back.
+- Pausing and resuming.
+- Stopping.
+- Restarting.
+- Alternative text input.
+
+Do not interrupt the user while they are speaking.
+
+Do not interpret an isolated word as a command unless its intent is clear.
+
+For example, the word "stop" in an ordinary sentence must not terminate assistance.
+
+An explicit stop button should immediately stop the session.
+
+---
+
+# 9. Name Recognition and Phonetic Confirmation
+
+Names require special handling.
+
+Never silently replace an unfamiliar name with a more common spelling.
+
+When asking for a name:
+
+1. Ask the user to say their name.
+2. Assess whether the speech recognition result is sufficiently reliable.
+3. If uncertain, politely ask them to spell it.
+4. Capture each letter individually.
+5. Use the English phonetic alphabet where useful.
+6. Read the captured spelling back.
+7. Ask whether it is correct.
+8. Populate the field only after the user confirms.
+
+For example:
+
+User: "H, R, R, I, S, H."
+
+Assistant: "H for Hotel, R for Romeo, R for Romeo, I for India, S for Sierra, H for Hotel. Is that correct?"
+
+Allow corrections to individual letters without forcing the user to repeat the entire name.
+
+---
+
+# 10. Telephone Number Recognition
+
+Telephone numbers require a dedicated information-capture workflow.
+
+Support:
+- Individual digits.
+- Double and triple expressions.
+- Spoken number groups.
+- International calling codes.
+- Country-specific number formats.
+- Chunk-based confirmation.
+
+Example:
+
+User: "Double nine, double four, double three."
+
+Assistant: "I have nine nine, four four, three three. Is that correct so far?"
+
+If confirmed, preserve those digits and continue with the next group.
+
+If a group is incorrect, ask the user to repeat only that group.
+
+### Country handling
+
+Always ask the user to confirm the country or country code when it is needed to interpret the telephone number.
+
+Do not silently infer the country from:
+- Current location.
+- Browser language.
+- Website domain.
+- IP address.
+- Unconfirmed form selections.
+
+Use country-specific numbering rules after the user confirms the relevant country.
+
+If the form has a country selector, explain what is selected and ask the user whether it is correct before using it for number interpretation.
+
+Validate without silently changing the number.
+
+---
+
+# 11. Rephrasing Assistance
+
+Users may speak naturally without producing grammatically correct or professionally written sentences.
+
+ID Assist should provide rephrasing assistance for descriptive fields such as:
+
+- Work experience.
+- Education.
+- Skills.
+- Professional summaries.
+- Personal statements.
+- Other long text fields.
+
+### Workflow
+
+1. Ask the user a natural question.
+2. Capture their answer.
+3. Correct transcription mistakes where possible.
+4. Improve grammar and sentence structure.
+5. Make the wording clear and professionally appropriate.
+6. Preserve the user's original meaning.
+7. Populate the actual website text field.
+8. Read the revised text aloud.
+9. Ask whether the user is satisfied.
+10. If requested, rephrase the content again in the same field.
+
+Do not create a separate confirmation panel.
+
+Do not invent qualifications, achievements, responsibilities or experience.
+
+The user should be able to say:
+- "I like it."
+- "Make it more professional."
+- "Shorten it."
+- "Rephrase that."
+- "That's not what I meant."
+
+---
+
+# 12. CV and Document Reading
+
+CV reading is an optional enhancement.
+
+When ID Assist detects a CV upload field, ask:
+
+"Would you like me to read your CV to help complete the remaining fields?"
+
+Only proceed after explicit permission.
+
+If the user agrees:
+- Access the selected file through the website's file input where technically possible.
+- Attempt local document extraction before upload completes.
+- Support PDF and DOCX where possible.
+- Investigate OCR for scanned documents.
+- Extract education, employment history, skills and other relevant information.
+- Map extracted information to relevant fields.
+- Avoid asking questions already answered by the document.
+
+### Important limitations
+
+The selected file may not always be accessible.
+
+Some websites use:
+- Custom upload mechanisms.
+- Cross-origin frames.
+- Cloud-based file pickers.
+- Restricted file handling.
+- Upload processes that do not expose the original file.
+
+Never bypass browser security restrictions.
+
+If the file cannot be read, politely explain the limitation and continue by asking the user questions.
+
+### Information conflicts
+
+The user's latest explicit answer always takes priority over older information extracted from the CV.
+
+Do not silently overwrite the user's answer.
+
+Permission to upload a document does not automatically grant permission for ID Assist to analyse it.
+
+---
+
+# 13. Privacy and Security
+
+Privacy must be considered from the beginning of the architecture.
+
+Prioritise:
+- Local-first processing.
+- Minimal permissions.
+- Minimal data retention.
+- No unnecessary external services.
+- Transparent microphone activity.
+- Explicit document-reading permission.
+- Secure handling of temporary information.
+
+Never process passwords, OTPs, payment-card details, CVV values or authentication credentials through the speech or AI pipeline.
+
+Identify sensitive fields using input types, autocomplete metadata, labels and conservative classification rules.
+
+When uncertain whether a field is sensitive, leave it for the user to complete manually.
+
+Never:
+- Automatically submit a form.
+- Automatically make payments.
+- Automatically register accounts.
+- Bypass CAPTCHAs.
+- Bypass authentication.
+- Access files without permission.
+- Upload documents without user action.
+
+The user must always perform consequential submission actions manually.
+
+---
+
+# 14. Accessibility
+
+Accessibility is a core architectural requirement, not an optional improvement.
+
+Support:
+
+### Blind and low-vision users
+- Semantic form inspection.
+- Screen-reader compatibility.
+- Spoken field descriptions.
+- Keyboard and voice navigation.
+- Accessible status indicators.
+
+### Motor impairments
+- Minimal mouse precision requirements.
+- Keyboard navigation.
+- Voice-based interaction.
+
+### Hearing impairments
+- Optional visible transcript.
+- Clear visual status indicators.
+- Text alternatives to spoken instructions.
+
+### Speech disabilities and non-speaking users
+- Keyboard input.
+- Text-based answers.
+- Alternative interaction methods.
+
+### Cognitive accessibility
+- One question at a time.
+- Simple language.
+- Predictable interaction.
+- Easy correction.
+- Repeatable instructions.
+- Avoid unnecessary interruptions.
+
+Do not make voice the only way to use ID Assist.
+
+---
+
+# 15. Proposed Software Architecture
+
+Design a modular architecture with clear boundaries.
+
+Investigate and implement the following logical components:
+
+### A. Browser Integration Layer
+Responsible for:
+- Extension lifecycle.
+- Manifest configuration.
+- Browser permissions.
+- Content scripts.
+- Background service worker.
+- Browser-specific APIs.
+
+### B. Form Detection Engine
+Responsible for:
+- Detecting forms.
+- Identifying relevant controls.
+- Detecting multiple forms.
+- Monitoring dynamic changes.
+- Tracking form navigation.
+
+### C. Form Understanding Engine
+Responsible for:
+- Extracting labels and descriptions.
+- Interpreting field types.
+- Identifying constraints.
+- Understanding field context.
+- Producing the common field representation.
+
+### D. Conversation Manager
+Responsible for:
+- Asking questions.
+- Managing session state.
+- Handling corrections.
+- Managing interruptions.
+- Determining the next missing field.
+- Tracking user intent.
+
+### E. Speech Layer
+Responsible for:
+- Speech recognition.
+- Text-to-speech.
+- Listening state.
+- Audio interruption.
+- Local/offline capability where available.
+
+### F. Information Extraction Engine
+Responsible for:
+- Extracting structured information.
+- Recognising names and numbers.
+- Parsing dates and addresses.
+- Handling multi-field answers.
+- Tracking confidence and ambiguity.
+
+### G. Validation and Field Mapping Engine
+Responsible for:
+- Mapping information to fields.
+- Validating formats.
+- Detecting constraints.
+- Reporting errors.
+- Preventing silent modifications.
+
+### H. Document Processing Engine
+Responsible for:
+- Permission-based document access.
+- PDF and DOCX extraction.
+- OCR integration.
+- Structured information extraction.
+
+### I. Floating Interface
+Responsible for:
+- Indicator rendering.
+- Session controls.
+- State communication.
+- Accessible interaction.
+
+### J. Security and Privacy Layer
+Responsible for:
+- Sensitive-field classification.
+- Permission checks.
+- Data minimisation.
+- Session cleanup.
+- Protected-field handling.
+
+Keep these as logical responsibilities. Do not create unnecessary microservices or overengineer a browser extension.
+
+---
+
+# 16. Initial Repository Structure
+
+Propose a maintainable project structure.
+
+A possible starting point is:
+
+```text
+id-assist/
+├── public/
+│   └── icons/
+├── src/
+│   ├── background/
+│   ├── content/
+│   ├── browser/
+│   ├── form-detection/
+│   ├── form-understanding/
+│   ├── conversation/
+│   ├── speech/
+│   ├── information-extraction/
+│   ├── field-mapping/
+│   ├── validation/
+│   ├── documents/
+│   ├── accessibility/
+│   ├── security/
+│   ├── floating-ui/
+│   ├── shared/
+│   └── types/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── browser/
+├── docs/
+├── manifest.json
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── README.md
+└── .gitignore
+```
+
+This is a proposed structure, not a rigid requirement. Adjust it based on the actual architecture.
+
+Avoid creating empty folders and unnecessary abstractions.
+
+---
+
+# 17. Implementation Roadmap
+
+Do not implement everything simultaneously.
+
+## Phase 1 — Browser Extension Foundation
+
+Objective: Establish a working Edge extension.
+
+Implement:
+- Project configuration.
+- Manifest V3.
+- Extension loading.
+- Content script.
+- Background service worker.
+- Basic form detection.
+- Floating indicator.
+- Consent prompt.
+- Session management.
+- Pause and stop controls.
+
+Acceptance criteria:
+- Extension loads successfully in Edge.
+- Detects ordinary HTML forms.
+- Displays the consent prompt.
+- Does not listen before consent.
+- Does not fill fields before consent.
+- Shows a floating indicator.
+- Indicator does not obstruct normal form interaction.
+- Consent is not repeatedly requested while navigating the same form.
+- User can stop assistance.
+
+## Phase 2 — Form Understanding
+
+Implement:
+- Common field representation.
+- Field labels and context extraction.
+- Required-field detection.
+- Field constraints.
+- Multiple-form handling.
+- Dynamic form detection.
+- Multi-page form handling.
+
+Acceptance criteria:
+- Correctly identifies common HTML controls.
+- Distinguishes multiple forms.
+- Understands field context.
+- Detects newly added and removed fields.
+- Does not confuse ordinary page navigation with form changes.
+
+## Phase 3 — Conversational Form Filling
+
+Implement:
+- Speech recognition evaluation and integration.
+- Text-to-speech.
+- Conversation manager.
+- One-question-at-a-time interaction.
+- Structured information extraction.
+- Field mapping.
+- Validation.
+- Corrections.
+- Interruption handling.
+
+Acceptance criteria:
+- User can answer a question naturally.
+- Answer is interpreted and mapped.
+- Field is populated without submitting the form.
+- Ambiguous answers trigger clarification.
+- Previously provided information is reused.
+- User can pause, resume, correct and stop.
+
+## Phase 4 — Accuracy and Accessibility
+
+Implement:
+- Name spelling workflow.
+- Phonetic confirmation.
+- Chunk-based telephone capture.
+- Country-specific telephone validation.
+- Rephrasing inside descriptive fields.
+- Screen-reader compatibility.
+- Keyboard interaction.
+- Alternative text input.
+- Visible transcript option.
+
+Acceptance criteria:
+- Unfamiliar names are not silently changed.
+- Confirmed telephone chunks are retained.
+- Corrections do not require repeating the entire number.
+- Rephrasing preserves meaning.
+- Accessibility tests cover the primary interaction flow.
+
+## Phase 5 — Document Assistance
+
+Implement:
+- Explicit CV-reading permission.
+- Local file extraction.
+- PDF and DOCX support where feasible.
+- OCR investigation.
+- Structured CV information extraction.
+- Field mapping.
+- Conflict resolution in favour of the user's latest explicit answer.
+
+Acceptance criteria:
+- Document is analysed only after permission.
+- Processing remains local where supported.
+- Unsupported documents fail gracefully.
+- User can continue without document assistance.
+
+## Phase 6 — Optional Language Model Fallback
+
+Only investigate this phase if testing demonstrates a genuine need.
+
+The default architecture must work without an LLM.
+
+If an LLM is introduced:
+- Make it optional.
+- Keep it isolated.
+- Do not make it responsible for browser interaction.
+- Do not let it directly populate fields.
+- Validate all returned information deterministically.
+- Require explicit user consent before transmitting personal information externally.
+
+---
+
+# 18. Testing Strategy
+
+Test the extension against representative websites and forms.
+
+Create controlled test pages for:
+- Basic contact forms.
+- Registration forms.
+- Job application forms.
+- Multi-step forms.
+- Forms with multiple sections.
+- Forms with conditional fields.
+- Forms with dynamic controls.
+- Forms containing file uploads.
+- Forms with custom dropdowns.
+- Forms with multiple independent forms on the same page.
+
+Test:
+- Missing labels.
+- Ambiguous fields.
+- Invalid answers.
+- Speech recognition errors.
+- Names with unfamiliar spellings.
+- Telephone numbers in different formats.
+- User interruptions.
+- User corrections.
+- Session termination.
+- Navigation between pages.
+- Sensitive fields.
+- Unsupported controls.
+
+Do not claim a feature works until it has been tested.
+
+Document unsupported scenarios and browser limitations.
+
+---
+
+# 19. Development Instructions for Codex
+
+Follow these instructions throughout the project.
+
+1. Start by inspecting the empty repository.
+2. Present the proposed architecture and explain important decisions.
+3. Identify dependencies and justify each one.
+4. Establish the project structure.
+5. Implement Phase 1 only.
+6. Test Phase 1 before moving forward.
+7. Provide clear instructions for loading the extension into Microsoft Edge.
+8. Explain how to test it manually.
+9. Update the README and technical documentation.
+10. Do not silently skip requirements.
+11. Do not implement speculative features prematurely.
+12. Do not overengineer the application.
+13. Keep modules independent and testable.
+14. Use TypeScript types and clear interfaces.
+15. Keep security and accessibility in the design from the beginning.
+16. Explain technical limitations rather than pretending they do not exist.
+
+If an important architectural decision cannot be made confidently, present the alternatives and ask before proceeding.
+
+Do not ask unnecessary questions when a reasonable, reversible implementation choice can be made and documented.
+
+---
+
+# 20. First Task — Begin Implementation
+
+Start by doing the following:
+
+**Step 1:** Inspect the repository and confirm that it is an empty project.
+
+**Step 2:** Present the proposed technology stack and architecture for Microsoft Edge Manifest V3.
+
+**Step 3:** Explain how form detection, consent, session management and the floating indicator will work together.
+
+**Step 4:** Identify any important browser limitations or unresolved decisions.
+
+**Step 5:** Create the initial project structure and implement Phase 1.
+
+**Step 6:** Run the tests and provide instructions to load and test the extension in Microsoft Edge.
+
+Do not start Phase 2 until Phase 1 has been implemented and its acceptance criteria have been tested.
+
+---
+
+## Final Product Principle
+
+ID Assist must be designed around one fundamental idea:
+
+**The user should not have to struggle to complete a form, and the assistant should never create more work by making unnecessary assumptions or asking unnecessary questions.**
+
+It should understand, ask clearly, listen carefully, populate accurately, explain uncertainty and always leave control with the user.

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Contact us</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Contact us</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <p>We usually reply within two working days.</p>
+    <form id="contact" action="/submit" method="post" onsubmit="event.preventDefault(); alert('Submitted (test page)')">
+      <div class="field"><label for="name">Full name</label><input id="name" name="name" type="text" autocomplete="name" required /></div>
+      <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+      <div class="field"><label for="subject">Subject</label>
+        <select id="subject" name="subject"><option value="">Choose a topic</option><option>Sales</option><option>Support</option><option>Other</option></select></div>
+      <div class="field"><label for="message">Message <span class="hint">(required)</span></label><textarea id="message" name="message" required></textarea></div>
+      <button type="submit">Send message</button>
+    </form>
+    <footer>ID Assist fixture: basic contact form.</footer>
+  </body>
+</html>

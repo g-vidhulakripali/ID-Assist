@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Create your account</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Create your account</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <form id="register" onsubmit="event.preventDefault(); alert('Submitted (test page)')">
+      <div class="row">
+        <div class="field"><label for="given">First name</label><input id="given" name="given_name" autocomplete="given-name" required /></div>
+        <div class="field"><label for="family">Last name</label><input id="family" name="family_name" autocomplete="family-name" required /></div>
+      </div>
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+      <div class="field"><label for="dob">Date of birth</label><input id="dob" name="dob" type="date" autocomplete="bday" /></div>
+      <div class="field"><label for="country">Country</label>
+        <select id="country" name="country" autocomplete="country"><option value="">Select</option><option value="DE">Germany</option><option value="IN">India</option><option value="GB">United Kingdom</option></select></div>
+      <div class="field"><label for="phone">Mobile number</label><input id="phone" name="phone" type="tel" autocomplete="tel" /></div>
+      <div class="row">
+        <div class="field"><label for="pw">Password</label><input id="pw" name="password" type="password" autocomplete="new-password" required /></div>
+        <div class="field"><label for="pw2">Confirm password</label><input id="pw2" name="password_confirmation" type="password" autocomplete="new-password" required /></div>
+      </div>
+      <div class="field"><label><input type="checkbox" name="terms" required /> I agree to the terms of service</label></div>
+      <button type="submit">Create account</button>
+    </form>
+    <footer>ID Assist fixture: registration form with credential fields.</footer>
+  </body>
+</html>

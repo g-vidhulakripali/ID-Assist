@@ -1,0 +1,27 @@
+{
+  "name": "id-assist",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ID Assist (Intelligent Dictation Assistance): a consent-first, voice-first form-filling assistant for Microsoft Edge.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "build:harness": "node scripts/build.mjs --harness",
+    "icons": "node scripts/generate-icons.mjs",
+    "serve": "node scripts/serve.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run typecheck && npm test && npm run build",
+    "edge:dev": "node scripts/edge-dev.mjs",
+    "edge:smoke": "node scripts/edge-smoke.mjs"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.7",
+    "esbuild": "^0.28.2",
+    "jsdom": "^29.1.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

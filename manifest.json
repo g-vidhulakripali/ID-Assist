@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "ID Assist",
+  "short_name": "ID Assist",
+  "version": "0.1.0",
+  "description": "Intelligent Dictation Assistance. Offers to help you complete online forms by conversation. Nothing is listened to or filled in without your consent.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "ID Assist: offer help with the form on this page",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "permissions": ["storage"],
+  "commands": {
+    "activate-assist": {
+      "suggested_key": { "default": "Alt+Shift+A" },
+      "description": "Offer ID Assist help with the form on this page (or focus its controls when already active)"
+    }
+  }
+}

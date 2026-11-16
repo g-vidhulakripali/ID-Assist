@@ -1,0 +1,15 @@
+body { font-family: system-ui, sans-serif; max-width: 720px; margin: 32px auto; padding: 0 16px; line-height: 1.5; color: #222; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+nav a { margin-right: 12px; }
+form, .form-like { border: 1px solid #ddd; border-radius: 8px; padding: 16px 20px; margin: 16px 0; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.row { display: flex; gap: 12px; }
+.row .field { flex: 1; }
+label { font-weight: 600; }
+input, select, textarea { font: inherit; padding: 6px 8px; border: 1px solid #aaa; border-radius: 4px; }
+textarea { min-height: 90px; }
+button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #555; background: #f6f6f6; cursor: pointer; }
+button[type="submit"] { background: #1f4fd8; color: #fff; border-color: #1f4fd8; }
+.hint { font-weight: 400; color: #666; font-size: 13px; }
+.step[hidden] { display: none; }
+footer { margin-top: 48px; color: #777; font-size: 13px; }

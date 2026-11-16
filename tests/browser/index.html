@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ID Assist test pages</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; line-height: 1.5; }
+      table { border-collapse: collapse; width: 100%; }
+      td, th { text-align: left; padding: 6px 8px; border-bottom: 1px solid #ddd; vertical-align: top; }
+      code { background: #f3f3f3; padding: 0 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>ID Assist controlled test pages</h1>
+    <p>
+      Each page exists in two modes. <strong>Extension</strong> links are plain pages for testing the real
+      extension loaded in Edge. <strong>Harness</strong> links add <code>?harness</code>, which injects a fake
+      <code>chrome</code> runtime and the built content script so the UI can be exercised without installing anything
+      (run <code>npm run build:harness</code> first).
+    </p>
+    <table>
+      <thead><tr><th>Page</th><th>Expected behaviour</th><th>Open</th></tr></thead>
+      <tbody>
+        <tr><td>Contact form</td><td>Consent prompt appears once. 4 fields.</td><td><a href="fixtures/contact.html">extension</a> · <a href="fixtures/contact.html?harness">harness</a></td></tr>
+        <tr><td>Registration</td><td>Prompt appears. Password fields are classified as credentials and excluded from the assistable count.</td><td><a href="fixtures/registration.html">extension</a> · <a href="fixtures/registration.html?harness">harness</a></td></tr>
+        <tr><td>Job application</td><td>Prompt appears for the sectioned form (file upload, radios, textareas, custom combobox).</td><td><a href="fixtures/job-application.html">extension</a> · <a href="fixtures/job-application.html?harness">harness</a></td></tr>
+        <tr><td>Multi-step (same page)</td><td>Accept on step 1, then click Next: no second prompt, indicator keeps running.</td><td><a href="fixtures/multistep.html">extension</a> · <a href="fixtures/multistep.html?harness">harness</a></td></tr>
+        <tr><td>Multi-page (page 1 &rarr; 2)</td><td>Accept on page 1, follow the link: page 2 resumes silently. Decline on page 1: page 2 stays quiet.</td><td><a href="fixtures/multipage-1.html">extension</a> · <a href="fixtures/multipage-1.html?harness">harness</a></td></tr>
+        <tr><td>Multiple forms</td><td>Search box and single-field newsletter are ignored; the contact form is offered.</td><td><a href="fixtures/multiple-forms.html">extension</a> · <a href="fixtures/multiple-forms.html?harness">harness</a></td></tr>
+        <tr><td>Login</td><td>No prompt: a credential plus one field is a sign-in form.</td><td><a href="fixtures/login.html">extension</a> · <a href="fixtures/login.html?harness">harness</a></td></tr>
+        <tr><td>Payment</td><td>Prompt appears for billing details; card number, expiry and CVC are marked sensitive.</td><td><a href="fixtures/payment.html">extension</a> · <a href="fixtures/payment.html?harness">harness</a></td></tr>
+        <tr><td>Dynamic form</td><td>No prompt until the form is injected 2 s after load; prompt disappears if the form is removed before answering.</td><td><a href="fixtures/dynamic.html">extension</a> · <a href="fixtures/dynamic.html?harness">harness</a></td></tr>
+        <tr><td>No form</td><td>Nothing appears. Shortcut shows "No form found" briefly.</td><td><a href="fixtures/no-form.html">extension</a> · <a href="fixtures/no-form.html?harness">harness</a></td></tr>
+      </tbody>
+    </table>
+    <p>In harness mode the fake tab registry persists in <code>sessionStorage</code>; call <code>idAssistHarness.resetTab()</code> in the console to simulate a fresh tab.</p>
+  </body>
+</html>

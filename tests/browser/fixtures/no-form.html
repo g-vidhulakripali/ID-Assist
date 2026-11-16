@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>An article</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Why forms are hard</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <article>
+      <p>This page contains prose and a single search box, but no form that ID Assist should offer to help with.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.</p>
+      <div role="search"><label for="q">Search this site</label> <input id="q" type="search" name="q" /></div>
+    </article>
+    <footer>ID Assist fixture: no eligible form. Manual activation should report "No form found".</footer>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Acme Widgets</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Acme Widgets</h1>
+      <form role="search" action="/search"><label for="q" class="hint">Search</label> <input id="q" name="q" type="search" placeholder="Search products" /> <button>Go</button></form>
+    </header>
+    <nav><a href="../index.html">All test pages</a></nav>
+    <p>Welcome to our site. This page has a search box, a one-field newsletter box and a real enquiry form.</p>
+    <aside>
+      <h2>Newsletter</h2>
+      <form id="newsletter"><label for="nl">Your email</label> <input id="nl" name="email" type="email" /> <button>Subscribe</button></form>
+    </aside>
+    <section>
+      <h2>Trade enquiry</h2>
+      <form id="enquiry" onsubmit="event.preventDefault(); alert('Submitted (test page)')">
+        <div class="field"><label for="company">Company</label><input id="company" name="company" /></div>
+        <div class="field"><label for="contact">Contact name</label><input id="contact" name="contact" /></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" /></div>
+        <div class="field"><label for="qty">Quantity</label><input id="qty" name="quantity" type="number" /></div>
+        <button type="submit">Send enquiry</button>
+      </form>
+    </section>
+    <footer>ID Assist fixture: search and newsletter forms should be ignored; the enquiry form should be offered.</footer>
+  </body>
+</html>

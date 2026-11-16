@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Checkout</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Checkout</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <form id="checkout" onsubmit="event.preventDefault(); alert('Submitted (test page)')">
+      <h2>Billing address</h2>
+      <div class="field"><label for="name">Name on card</label><input id="name" name="billing_name" autocomplete="cc-name" /></div>
+      <div class="field"><label for="addr">Street address</label><input id="addr" name="address" autocomplete="street-address" /></div>
+      <div class="field"><label for="city">City</label><input id="city" name="city" autocomplete="address-level2" /></div>
+      <div class="field"><label for="pin">PIN code</label><input id="pin" name="pincode" inputmode="numeric" /></div>
+      <h2>Card details</h2>
+      <div class="field"><label for="card">Card number</label><input id="card" name="cardnumber" inputmode="numeric" autocomplete="cc-number" /></div>
+      <div class="row">
+        <div class="field"><label for="exp">Expiry (MM/YY)</label><input id="exp" name="exp" autocomplete="cc-exp" /></div>
+        <div class="field"><label for="cvc">CVC</label><input id="cvc" name="cvc" inputmode="numeric" autocomplete="cc-csc" /></div>
+      </div>
+      <div class="field"><label for="otp">One-time code sent to your phone</label><input id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" /></div>
+      <button type="submit">Pay now</button>
+    </form>
+    <footer>ID Assist fixture: payment form. Address fields are assistable; card and one-time-code fields are sensitive and must never be spoken or filled.</footer>
+  </body>
+</html>

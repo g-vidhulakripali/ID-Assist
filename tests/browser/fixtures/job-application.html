@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Apply: Frontend Engineer</title>
+    <link rel="stylesheet" href="fixture.css" />
+    <script src="../harness/loader.js"></script>
+  </head>
+  <body>
+    <header><h1>Apply: Frontend Engineer</h1><nav><a href="../index.html">All test pages</a></nav></header>
+    <form id="apply" aria-label="Job application" onsubmit="event.preventDefault(); alert('Submitted (test page)')">
+      <fieldset>
+        <legend>About you</legend>
+        <div class="field"><label for="name">Full name</label><input id="name" name="applicant[name]" required /></div>
+        <div class="field"><label for="email">Email</label><input id="email" name="applicant[email]" type="email" required /></div>
+        <div class="field"><label for="phone">Phone</label><input id="phone" name="applicant[phone]" type="tel" /></div>
+        <div class="field"><label for="portfolio">Portfolio URL</label><input id="portfolio" name="applicant[url]" type="url" /></div>
+      </fieldset>
+      <fieldset>
+        <legend>Work authorisation</legend>
+        <label><input type="radio" name="authorised" value="yes" /> Yes, I am authorised to work here</label><br />
+        <label><input type="radio" name="authorised" value="no" /> No, I would need sponsorship</label>
+      </fieldset>
+      <fieldset>
+        <legend>Experience</legend>
+        <div class="field"><label for="years">Years of experience</label><input id="years" name="years" type="number" min="0" max="50" /></div>
+        <div class="field">
+          <label id="skills-label">Primary skill</label>
+          <div id="skills" role="combobox" aria-labelledby="skills-label" aria-expanded="false" aria-haspopup="listbox" tabindex="0" style="border:1px solid #aaa;border-radius:4px;padding:6px 8px;background:#fff">Select a skill</div>
+        </div>
+        <div class="field"><label for="summary">Professional summary</label><textarea id="summary" name="summary"></textarea></div>
+        <div class="field"><label for="experience">Describe your most relevant experience</label><textarea id="experience" name="experience"></textarea></div>
+      </fieldset>
+      <fieldset>
+        <legend>Documents</legend>
+        <div class="field"><label for="cv">Upload your CV <span class="hint">(PDF or DOCX)</span></label><input id="cv" name="cv" type="file" accept=".pdf,.docx" /></div>
+        <div class="field"><label for="start">Earliest start date</label><input id="start" name="start_date" type="date" /></div>
+        <div class="field"><label for="salary">Expected salary range</label><input id="salary" name="salary" type="range" min="30000" max="150000" step="5000" /></div>
+      </fieldset>
+      <button type="submit">Submit application</button>
+    </form>
+    <footer>ID Assist fixture: job application with sections, radios, file upload and a custom combobox.</footer>
+  </body>
+</html>
